@@ -623,14 +623,35 @@ Complexity Level: ${complexity || 'Production-Ready SaaS'}
 Additional Requirements: ${additionalRequirements || 'Modern cloud-native architecture, secure authentication, high performance'}`;
 
     try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: 'application/json',
-        },
-      });
+      const generationConfig = {
+        systemInstruction: systemPrompt,
+        responseMimeType: 'application/json' as const,
+      };
+
+      let response;
+      try {
+        response = await ai.models.generateContent({
+          model: 'gemini-3.8-flash',
+          contents: userPrompt,
+          config: generationConfig,
+        });
+      } catch (primaryError: any) {
+        const status = primaryError?.status ?? primaryError?.error?.code;
+        const message = String(primaryError?.message ?? primaryError?.error?.message ?? '');
+        const isTemporaryCapacityError =
+          status === 503 ||
+          status === 429 ||
+          /UNAVAILABLE|high demand|RESOURCE_EXHAUSTED/i.test(message);
+
+        if (!isTemporaryCapacityError) throw primaryError;
+
+        console.warn('Primary Gemini model is temporarily unavailable; retrying with Gemini 3.7 Flash.');
+        response = await ai.models.generateContent({
+          model: 'gemini-3.7-flash',
+          contents: userPrompt,
+          config: generationConfig,
+        });
+      }
 
       const text = response.text || '';
       let parsed = JSON.parse(text);
