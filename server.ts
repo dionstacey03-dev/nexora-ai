@@ -480,10 +480,13 @@ MIT © NEXORA AI Software Builder.`,
 // 1. AI PROJECT GENERATOR ENDPOINT
 app.post('/api/generate-project', async (req: Request, res: Response) => {
   try {
+    if (!isPlainObject(req.body)) return res.status(400).json({ error: 'A valid JSON object is required.' });
     const { idea, category, targetAudience, primaryLanguage, complexity, additionalRequirements } = req.body;
-
-    if (!idea || typeof idea !== 'string') {
-      return res.status(400).json({ error: 'Project idea is required.' });
+    if (typeof idea !== 'string' || !idea.trim() || idea.length > 2000) {
+      return res.status(400).json({ error: 'Project idea must be between 1 and 2000 characters.' });
+    }
+    if (!isOptionalString(category, 100) || !isOptionalString(targetAudience, 300) || !isOptionalString(primaryLanguage, 80) || !isOptionalString(complexity, 100) || !isOptionalString(additionalRequirements, 2000)) {
+      return res.status(400).json({ error: 'One or more project fields are invalid or too long.' });
     }
 
     // Check if GEMINI_API_KEY is available
@@ -641,14 +644,18 @@ Additional Requirements: ${additionalRequirements || 'Modern cloud-native archit
     }
   } catch (error: any) {
     console.error('Server error in /api/generate-project:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    return res.status(500).json({ error: 'An unexpected server error occurred.' });
   }
 });
 
 // 2. TECH STACK RECOMMENDER ENDPOINT
 app.post('/api/recommend-stack', async (req: Request, res: Response) => {
   try {
-    const { category, scale, language, requirements } = req.body;
+    if (!isPlainObject(req.body)) return res.status(400).json({ error: 'A valid JSON object is required.' });
+    const { category = '', scale = '', language = '', requirements = '' } = req.body;
+    if (!isOptionalString(category, 100) || !isOptionalString(scale, 100) || !isOptionalString(language, 80) || !isOptionalString(requirements, 2000)) {
+      return res.status(400).json({ error: 'Tech stack inputs are invalid or too long.' });
+    }
 
     const fallbackRecommendations = [
       {
@@ -761,17 +768,21 @@ Conform to this JSON format:
       return res.json({ recommendations: fallbackRecommendations });
     }
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    console.error('Server error in /api/recommend-stack:', error);
+    return res.status(500).json({ error: 'Unable to generate recommendations right now.' });
   }
 });
 
 // 3. CODE STUDIO GENERATOR ENDPOINT
 app.post('/api/generate-code', async (req: Request, res: Response) => {
   try {
+    if (!isPlainObject(req.body)) return res.status(400).json({ error: 'A valid JSON object is required.' });
     const { prompt, language = 'typescript', codeType = 'component', projectName = 'Project' } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
+    if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 8000) {
+      return res.status(400).json({ error: 'Prompt must be between 1 and 8000 characters.' });
+    }
+    if (!isOptionalString(language, 80) || !isOptionalString(codeType, 80) || !isOptionalString(projectName, 120)) {
+      return res.status(400).json({ error: 'Code generation options are invalid or too long.' });
     }
 
     if (!process.env.GEMINI_API_KEY) {
@@ -803,17 +814,17 @@ Return JSON:
     const parsed = JSON.parse(response.text || '{}');
     return res.json(parsed);
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    console.error('Server error in /api/generate-code:', error);
+    return res.status(500).json({ error: 'Unable to generate code right now.' });
   }
 });
 
 // 4. README STUDIO GENERATOR ENDPOINT
 app.post('/api/generate-readme', async (req: Request, res: Response) => {
   try {
+    if (!isPlainObject(req.body) || !isPlainObject(req.body.project)) return res.status(400).json({ error: 'Valid project data is required.' });
     const { project } = req.body;
-    if (!project) {
-      return res.status(400).json({ error: 'Project data is required' });
-    }
+    if (JSON.stringify(project).length > 50000) return res.status(400).json({ error: 'Project data is too large.' });
 
     if (!process.env.GEMINI_API_KEY) {
       return res.json({
@@ -840,8 +851,16 @@ Return pure markdown.`,
 
     return res.json({ markdown: response.text || '' });
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    console.error('Server error in /api/generate-readme:', error);
+    return res.status(500).json({ error: 'Unable to generate the README right now.' });
   }
+});
+
+// Handle malformed and oversized JSON requests without exposing internals.
+app.use((error: any, _req: Request, res: Response, next: (err?: any) => void) => {
+  if (error instanceof SyntaxError && 'body' in error) return res.status(400).json({ error: 'Malformed JSON request.' });
+  if (error?.type === 'entity.too.large') return res.status(413).json({ error: 'Request body is too large.' });
+  return next(error);
 });
 
 // MOUNT VITE IN DEV OR STATIC IN PROD
