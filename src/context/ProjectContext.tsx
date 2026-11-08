@@ -147,7 +147,11 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       });
 
       if (!response.ok) {
-        throw new Error(`Generation failed with HTTP status ${response.status}`);
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(
+          errorBody?.error ||
+          `Project generation failed (HTTP ${response.status}). Please try again.`
+        );
       }
 
       const newProject: SoftwareProject = await response.json();
@@ -158,7 +162,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       return newProject;
     } catch (error: any) {
       console.error('Generation request failed:', error);
-      showToast('Encountered an issue during AI generation. Fallback generated.', 'info');
+      showToast(error?.message || 'AI generation failed. Please try again.', 'error');
       throw error;
     } finally {
       clearTimeout(stepTimer1);
