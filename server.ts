@@ -626,6 +626,9 @@ Additional Requirements: ${additionalRequirements || 'Modern cloud-native archit
       const generationConfig = {
         systemInstruction: systemPrompt,
         responseMimeType: 'application/json' as const,
+        // Keep the architecture response comprehensive but bounded for serverless execution.
+        maxOutputTokens: 8192,
+        temperature: 0.2,
       };
 
       let response;
@@ -640,8 +643,9 @@ Additional Requirements: ${additionalRequirements || 'Modern cloud-native archit
         const message = String(primaryError?.message ?? primaryError?.error?.message ?? '');
         const isTemporaryCapacityError =
           status === 503 ||
+          status === 504 ||
           status === 429 ||
-          /UNAVAILABLE|high demand|RESOURCE_EXHAUSTED/i.test(message);
+          /UNAVAILABLE|DEADLINE_EXCEEDED|high demand|RESOURCE_EXHAUSTED|deadline expired/i.test(message);
 
         if (!isTemporaryCapacityError) throw primaryError;
 
