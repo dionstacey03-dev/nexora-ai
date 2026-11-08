@@ -1,0 +1,6 @@
+{
+  "name": "NEXORA AI",
+  "description": "Ideas Into Intelligence. Intelligence Into Reality. Intelligent software project builder transforming simple ideas into complete software development plans, roadmaps, tech stack recommendations, and starter code using Google Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
