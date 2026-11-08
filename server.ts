@@ -631,31 +631,46 @@ Additional Requirements: ${additionalRequirements || 'Modern cloud-native archit
         temperature: 0.2,
       };
 
-      let response;
-      try {
-        response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
-          contents: userPrompt,
-          config: generationConfig,
-        });
-      } catch (primaryError: any) {
-        const status = primaryError?.status ?? primaryError?.error?.code;
-        const message = String(primaryError?.message ?? primaryError?.error?.message ?? '');
-        const isTemporaryCapacityError =
-          status === 503 ||
-          status === 504 ||
-          status === 429 ||
-          /UNAVAILABLE|DEADLINE_EXCEEDED|high demand|RESOURCE_EXHAUSTED|deadline expired/i.test(message);
+      const modelFallbacks = [
+        'gemini-3.8-flash',
+        'gemini-3.7-flash',
+        'gemini-3.5-flash-lite',
+      ];
 
-        if (!isTemporaryCapacityError) throw primaryError;
+      let response: any;
+      let lastModelError: any;
 
-        console.warn('Primary Gemini model is temporarily unavailable; retrying with Gemini 3.7 Flash.');
-        response = await ai.models.generateContent({
-          model: 'gemini-3.7-flash',
-          contents: userPrompt,
-          config: generationConfig,
-        });
+      for (const [index, model] of modelFallbacks.entries()) {
+        try {
+          response = await ai.models.generateContent({
+            model,
+            contents: userPrompt,
+            config: generationConfig,
+          });
+          console.info(`Gemini generation succeeded with ${model}`);
+          break;
+        } catch (modelError: any) {
+          lastModelError = modelError;
+          const status = modelError?.status ?? modelError?.error?.code;
+          const message = String(modelError?.message ?? modelError?.error?.message ?? '');
+          const temporaryCapacityError =
+            status === 503 ||
+            status === 504 ||
+            status === 429 ||
+            /UNAVAILABLE|DEADLINE_EXCEEDED|high demand|RESOURCE_EXHAUSTED|deadline expired/i.test(message);
+
+          console.warn(`Gemini model ${model} failed:`, {
+            status: status ?? 'unknown',
+            temporaryCapacityError,
+          });
+
+          if (!temporaryCapacityError || index === modelFallbacks.length - 1) {
+            throw modelError;
+          }
+        }
       }
+
+      if (!response) throw lastModelError ?? new Error('No Gemini model returned a response.');
 
       const text = response.text || '';
       let parsed = JSON.parse(text);
