@@ -58,8 +58,13 @@ function isOptionalString(value: unknown, maxLength: number): boolean {
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
   httpOptions: {
+    // Prevent stalled Gemini requests from holding a Vercel function open.
+    timeout: 90_000,
+    retryOptions: {
+      attempts: 1,
+    },
     headers: {
-      'User-Agent': 'aistudio-build',
+      'User-Agent': 'NEXORA-AI',
     },
   },
 });
