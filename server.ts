@@ -12,7 +12,47 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json({ limit: '10mb' }));
+// Keep incoming JSON payloads small to reduce memory and abuse risk.
+app.use(express.json({ limit: '1mb', strict: true }));
+
+// Lightweight per-process API rate limiter. For multi-instance deployments,
+// use a shared store such as Redis or a managed gateway-level limiter.
+const API_RATE_WINDOW_MS = 15 * 60 * 1000;
+const API_RATE_MAX_REQUESTS = 20;
+const apiRequestCounts = new Map<string, { count: number; resetAt: number }>();
+
+app.use('/api', (req: Request, res: Response, next) => {
+  const now = Date.now();
+  const clientKey = req.ip || req.socket.remoteAddress || 'unknown';
+  let entry = apiRequestCounts.get(clientKey);
+  if (!entry || now >= entry.resetAt) {
+    entry = { count: 0, resetAt: now + API_RATE_WINDOW_MS };
+    apiRequestCounts.set(clientKey, entry);
+  }
+  entry.count += 1;
+  res.setHeader('RateLimit-Limit', API_RATE_MAX_REQUESTS);
+  res.setHeader('RateLimit-Remaining', Math.max(0, API_RATE_MAX_REQUESTS - entry.count));
+  res.setHeader('RateLimit-Reset', Math.ceil(entry.resetAt / 1000));
+  if (entry.count > API_RATE_MAX_REQUESTS) {
+    res.setHeader('Retry-After', Math.ceil((entry.resetAt - now) / 1000));
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
+  if (apiRequestCounts.size > 1000) {
+    for (const [key, value] of apiRequestCounts) {
+      if (now >= value.resetAt) apiRequestCounts.delete(key);
+    }
+    if (apiRequestCounts.size > 5000) apiRequestCounts.clear();
+  }
+  next();
+});
+
+function isPlainObject(value: unknown): value is Record<string, any> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isOptionalString(value: unknown, maxLength: number): boolean {
+  return value === undefined || (typeof value === 'string' && value.length <= maxLength);
+}
 
 // Initialize Google GenAI on server-side
 const ai = new GoogleGenAI({
