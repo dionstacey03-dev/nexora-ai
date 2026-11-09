@@ -35,7 +35,7 @@ export const CodeStudio: React.FC = () => {
 
   // Custom AI Code Generator state
   const [customPrompt, setCustomPrompt] = useState(
-    'Create an Express rate-limiting middleware using Redis sliding-window algorithm.'
+    'Create a secure authentication module for a multi-tenant student management SaaS. Use server-side tenant context, prevent public ADMIN registration, validate inputs, hash passwords safely, use explicit JWT algorithms/issuer/audience, implement atomic refresh-token rotation with reuse detection and revocation, enforce token-version checks, scope every database query by tenant, and include tests. Inspect existing dependencies and repository interfaces; do not invent database methods or claim production readiness without verification.'
   );
   const [customCodeType, setCustomCodeType] = useState('middleware');
   const [isGeneratingCustom, setIsGeneratingCustom] = useState(false);
