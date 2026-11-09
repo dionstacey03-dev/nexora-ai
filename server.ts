@@ -852,22 +852,51 @@ app.post('/api/generate-code', async (req: Request, res: Response) => {
       });
     }
 
+    const authRelatedRequest = /\\b(auth|authentication|authorization|login|registration|jwt|refresh.token|session|password|rbac|tenant)\\b/i.test(`${prompt} ${codeType}`);
+    const securityInstructions = authRelatedRequest
+      ? `
+SECURITY REQUIREMENTS FOR AUTHENTICATION-RELATED CODE:
+- Treat this as a security-sensitive implementation, not a demo. Never claim production readiness without tests and integration details.
+- Never allow public self-registration to choose privileged roles (ADMIN, OWNER, SUPER_ADMIN) or arbitrary tenant IDs. Derive tenant context from trusted server-side state; privileged roles require an authorized provisioning flow.
+- Validate all inputs with the project's existing validation library when known; do not invent unavailable dependencies or repository methods.
+- Use explicit JWT algorithms, issuer, audience, expiry, and separate secrets for access and refresh tokens. Never hardcode secrets or expose them to browser code.
+- Hash passwords with a modern password-hashing library and enforce a byte-aware maximum compatible with the chosen algorithm.
+- Store only hashes of opaque refresh tokens; rotate refresh tokens atomically, detect reuse, and revoke the whole token family on confirmed reuse.
+- Check session/token version during refresh and access-token authentication. Revocation must invalidate refresh as well as access sessions.
+- Scope every tenant-owned database read/write by the authenticated tenant ID. Middleware checks alone are not sufficient.
+- Use generic authentication responses to reduce account enumeration; add rate limiting and audit logging without logging credentials or tokens.
+- Handle concurrent refresh attempts safely with transactions/conditional updates. If the existing database adapter cannot guarantee this, clearly mark the requirement as unimplemented rather than pretending it is safe.
+- Include focused tests for privilege escalation, invalid/expired tokens, refresh rotation/reuse/concurrency, revocation, RBAC, and cross-tenant access.
+- Preserve existing project APIs and architecture. Inspect available files and dependencies; do not invent schema, adapters, imports, or methods.
+- Return complete code plus explicit assumptions, required migrations/configuration, tests actually included, and limitations.`
+      : `
+GENERAL CODE QUALITY REQUIREMENTS:
+- Inspect the stated project context and avoid inventing unavailable dependencies, APIs, schemas, or methods.
+- Validate untrusted inputs, handle errors safely, and avoid hardcoded secrets.
+- Preserve existing interfaces and explain any assumptions or integration work still required.
+- Include relevant tests when the project setup supports them; never claim tests ran unless they actually ran.`;
+
     const response = await ai.models.generateContent({
       model: 'gemini-3.8-flash',
-      contents: `You are an expert ${language} engineer.
-Generate clean, production-grade, fully-typed code for the following specification:
+      contents: `You are a senior ${language} engineer and security-conscious code reviewer.
+Generate complete, maintainable, fully typed code for this specification.
+
 Project: ${projectName}
 Type of code needed: ${codeType}
-Prompt: ${prompt}
+Specification:
+${prompt}
+
+${securityInstructions}
 
 Return JSON:
 {
-  "code": "The raw code string with proper indentation and TypeScript types",
-  "explanation": "Clear explanation of how the code works and key architectural decisions",
-  "filename": "Suggested filename (e.g. src/controllers/userController.ts)"
+  "code": "The raw code string with proper indentation and types",
+  "explanation": "Implementation details, security decisions, assumptions, and integration requirements",
+  "filename": "Suggested repository-relative filename"
 }`,
       config: {
         responseMimeType: 'application/json',
+        temperature: 0.1,
       },
     });
 
