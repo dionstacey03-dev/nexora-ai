@@ -305,7 +305,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
           const { value, done } = await reader.read();
           if (done) break;
           buffer += decoder.decode(value, { stream: true });
-          const events = buffer.split(/\\r?\\n\\r?\\n/);
+          const events = buffer.split(/\r?\n\r?\n/);
           buffer = events.pop() || '';
           for (const event of events) {
             const line = event.split(/\\r?\\n/).find((item) => item.startsWith('data: '));
