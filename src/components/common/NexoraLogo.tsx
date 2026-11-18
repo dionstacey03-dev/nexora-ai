@@ -26,12 +26,12 @@ export const NexoraLogo: React.FC<NexoraLogoProps> = ({
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Custom NEXORA Hexagonal Crystalline Prism Mark */}
       <div 
-        className="relative shrink-0 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 via-violet-600 to-indigo-500 p-[1.5px] shadow-lg shadow-violet-500/20 group cursor-pointer transition-transform duration-200 hover:scale-105"
+        className="relative shrink-0 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-600 to-indigo-500 p-[1.5px] shadow-lg shadow-blue-500/20 group cursor-pointer transition-transform duration-200 hover:scale-105"
         style={{ width: currentSize.icon + 8, height: currentSize.icon + 8 }}
       >
         <div className="w-full h-full rounded-[14px] bg-[#090d16] dark:bg-[#070b12] flex items-center justify-center overflow-hidden relative">
           {/* Subtle glowing background in mark */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-violet-500/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 via-blue-500/20 to-transparent pointer-events-none" />
           
           <svg
             width={currentSize.icon}
@@ -84,7 +84,7 @@ export const NexoraLogo: React.FC<NexoraLogoProps> = ({
             <span className={`font-extrabold tracking-tight text-slate-900 dark:text-white ${currentSize.text} leading-none font-sans`}>
               NEXORA
             </span>
-            <span className="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-gradient-to-r from-blue-600 to-violet-600 text-white shadow-xs">
+            <span className="text-[10px] font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-xs">
               AI
             </span>
           </div>
