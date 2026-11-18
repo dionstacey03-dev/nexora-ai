@@ -44,10 +44,40 @@ const API_RATE_WINDOW_MS = 15 * 60 * 1000;
 const API_RATE_MAX_REQUESTS = 20;
 const apiRequestCounts = new Map<string, { count: number; resetAt: number }>();
 
-app.use('/api', (req: Request, res: Response, next) => {
+app.use('/api', async (req: Request, res: Response, next) => {
   const now = Date.now();
   const clientKey = req.ip || req.socket.remoteAddress || 'unknown';
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/\\/$/, '');\n  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;\n  if (redisUrl && redisToken) {\n    try {\n      const key = `nexora:ratelimit:${Buffer.from(clientKey).toString('base64url')}`;\n      const script = \"local count = redis.call('INCR', KEYS[1]); if count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]); end; return count\";\n      const response = await fetch(redisUrl, { method: 'POST', headers: { Authorization: `Bearer ${redisToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(['EVAL', script, '1', key, String(API_RATE_WINDOW_MS / 1000)]), signal: AbortSignal.timeout(2500) });\n      if (!response.ok) throw new Error('Shared rate-limit store unavailable');\n      const result = await response.json() as { result?: number };\n      const count = Number(result.result);\n      if (!Number.isFinite(count)) throw new Error('Invalid shared rate-limit response');\n      res.setHeader('RateLimit-Limit', API_RATE_MAX_REQUESTS);\n      res.setHeader('RateLimit-Remaining', Math.max(0, API_RATE_MAX_REQUESTS - count));\n      if (count > API_RATE_MAX_REQUESTS) { res.setHeader('Retry-After', Math.ceil(API_RATE_WINDOW_MS / 1000)); return res.status(429).json({ error: 'Too many requests. Please try again later.' }); }\n      return next();\n    } catch {\n      return res.status(503).json({ error: 'Shared rate limiting is temporarily unavailable.', code: 'RATE_LIMIT_STORE_UNAVAILABLE' });\n    }\n  }\n  let entry = apiRequestCounts.get(clientKey);
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/$/, '');
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (redisUrl && redisToken) {
+    try {
+      const key = `nexora:ratelimit:${Buffer.from(clientKey).toString('base64url')}`;
+      const script = "local count = redis.call('INCR', KEYS[1]); if count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]); end; return count";
+      const response = await fetch(redisUrl, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${redisToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(['EVAL', script, '1', key, String(API_RATE_WINDOW_MS / 1000)]),
+        signal: AbortSignal.timeout(2500),
+      });
+      if (!response.ok) throw new Error('Shared rate-limit store unavailable');
+      const result = await response.json() as { result?: number };
+      const count = Number(result.result);
+      if (!Number.isFinite(count)) throw new Error('Invalid shared rate-limit response');
+      res.setHeader('RateLimit-Limit', API_RATE_MAX_REQUESTS);
+      res.setHeader('RateLimit-Remaining', Math.max(0, API_RATE_MAX_REQUESTS - count));
+      if (count > API_RATE_MAX_REQUESTS) {
+        res.setHeader('Retry-After', Math.ceil(API_RATE_WINDOW_MS / 1000));
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+      return next();
+    } catch {
+      return res.status(503).json({ error: 'Shared rate limiting is temporarily unavailable.', code: 'RATE_LIMIT_STORE_UNAVAILABLE' });
+    }
+  }
+
+  // Local fallback is intended for development; production should configure Upstash.
+  let entry = apiRequestCounts.get(clientKey);
   if (!entry || now >= entry.resetAt) {
     entry = { count: 0, resetAt: now + API_RATE_WINDOW_MS };
     apiRequestCounts.set(clientKey, entry);
