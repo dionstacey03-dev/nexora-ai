@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
+import { isPlainObject, isOptionalString } from './src/server/requestValidation';
 
 dotenv.config();
 
@@ -11,6 +12,17 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+if (process.env.VERCEL === '1') app.set('trust proxy', 1);
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'nexora-ai' }));
 
 // Keep incoming JSON payloads small to reduce memory and abuse risk.
 app.use(express.json({ limit: '1mb', strict: true }));
@@ -45,14 +57,6 @@ app.use('/api', (req: Request, res: Response, next) => {
   }
   next();
 });
-
-function isPlainObject(value: unknown): value is Record<string, any> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isOptionalString(value: unknown, maxLength: number): boolean {
-  return value === undefined || (typeof value === 'string' && value.length <= maxLength);
-}
 
 // Initialize Google GenAI on server-side
 const ai = new GoogleGenAI({
@@ -952,8 +956,11 @@ app.use((error: any, _req: Request, res: Response, next: (err?: any) => void) =>
   return next(error);
 });
 
-// MOUNT VITE IN DEV OR STATIC IN PROD
+// Export the same Express routes through Vercel's serverless function adapter.
+export { app };
+
 async function startServer() {
+  if (process.env.VERCEL === '1') return;
   if (process.env.NODE_ENV !== 'production') {
     const { createServer } = await import('vite');
     const vite = await createServer({
@@ -973,7 +980,9 @@ async function startServer() {
   });
 }
 
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+if (process.env.VERCEL !== '1') {
+  startServer().catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });
+}
