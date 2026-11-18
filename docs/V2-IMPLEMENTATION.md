@@ -9,13 +9,13 @@ This branch is an incremental upgrade to the existing application. The original 
 - Added optional shared Upstash Redis rate limiting. When configured, Redis errors fail closed with HTTP 503 rather than silently bypassing the shared limit.
 - The existing local in-memory limiter remains a development fallback when Upstash credentials are absent. Configure Upstash before relying on distributed production limits.
 
-### Identity provider setup
-Choose an OIDC provider (for example Clerk or Auth0) and configure:
-- `AUTH_JWKS_URL`: provider's JWKS endpoint.
-- `AUTH_ISSUER`: exact issuer value from the provider.
-- `AUTH_AUDIENCE`: API audience configured for NEXORA AI.
+### Clerk setup required
+Create or select the NEXORA AI application in the Clerk Dashboard, then configure:
+- `VITE_CLERK_PUBLISHABLE_KEY` in Vercel Preview and Production (browser key).
+- `CLERK_PUBLISHABLE_KEY` in Vercel Preview and Production (server key).
+- `CLERK_SECRET_KEY` in Vercel Preview and Production (server-only secret).
 
-The API verifier is provider-neutral; hosted sign-in UI, callback routes, account recovery, organization membership, and role/permission management still need to be connected to the selected provider. Existing project endpoints are not globally protected yet, to avoid locking out current users before sign-in is configured.
+The application intentionally fails closed until these keys are configured. The API health endpoint remains public; all other API endpoints require a verified Clerk session. Configure allowed origins/redirect URLs for the Vercel preview domain and production domain in Clerk. Production Clerk keys must come from a claimed, production-ready Clerk application.
 
 ## Phase 2 — Neon persistence
 - Migration `database/migrations/001_initial_schema.sql` defines users, owner-scoped projects, and preferences.
@@ -37,7 +37,7 @@ The API verifier is provider-neutral; hosted sign-in UI, callback routes, accoun
 - Complete end-to-end tests, dependency/secret configuration, security review, and manual regression testing before merge or production release.
 
 ## Release gates
-1. Select and configure an OIDC provider, then wire sign-in UI and protect user-specific routes.
+1. Configure Clerk keys and allowed origins for Preview and Production; verify sign-in, sign-up, sign-out, and protected API requests.
 2. Provision Neon, apply migration 001, implement transactional owner-scoped CRUD, and add import/sync tests.
 3. Configure Upstash and test concurrent-instance rate limiting.
 4. Add model routing, usage quotas, cancellation, and provider-failure tests.
