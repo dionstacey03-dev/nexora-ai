@@ -55,7 +55,7 @@ const AppShell: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-[#080c16] text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row relative liquid-mesh-bg selection:bg-violet-500/20 selection:text-violet-600 dark:selection:text-violet-300">
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-[#080c16] text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row relative liquid-mesh-bg selection:bg-blue-500/25 selection:text-blue-700 dark:selection:text-cyan-200">
       {/* Desktop Navigation Sidebar with shortcuts trigger */}
       <DesktopSidebar onOpenShortcuts={() => setShowShortcutsModal(true)} />
 
