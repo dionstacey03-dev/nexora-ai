@@ -140,7 +140,7 @@ export const DesktopTopNav: React.FC<{ onOpenShortcuts?: () => void }> = ({ onOp
         </button>
 
         <div className="flex items-center pl-1">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
 
         {/* Sun/Moon Theme Toggle */}
@@ -290,7 +290,7 @@ export const DesktopSidebar: React.FC<{ onOpenShortcuts?: () => void }> = ({ onO
       {/* Bottom Profile / Hotkeys & Theme */}
       <div className="pt-2 border-t border-slate-200/80 dark:border-white/10 space-y-2">
         <div className="flex items-center justify-center min-w-[38px]">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
 
         <button
