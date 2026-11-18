@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/react';
+import { ClerkProvider, Show, SignInButton, SignUpButton } from '@clerk/react';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider, useProjects } from './context/ProjectContext';
 import {
@@ -129,14 +129,14 @@ function ClerkSetupRequired() {
 function ClerkAuthExperience() {
   return (
     <ClerkProvider publishableKey={clerkPublishableKey}>
-      <SignedIn>
+      <Show when="signed-in">
         <ThemeProvider>
           <ProjectProvider>
             <AppShell />
           </ProjectProvider>
         </ThemeProvider>
-      </SignedIn>
-      <SignedOut>
+      </Show>
+      <Show when="signed-out">
         <main className="min-h-screen flex items-center justify-center bg-slate-950 px-6 py-12 text-white">
           <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center shadow-2xl">
             <div className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">NEXORA AI</div>
@@ -154,7 +154,7 @@ function ClerkAuthExperience() {
             </div>
           </section>
         </main>
-      </SignedOut>
+      </Show>
     </ClerkProvider>
   );
 }
