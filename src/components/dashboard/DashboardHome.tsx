@@ -124,7 +124,7 @@ export const DashboardHome: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('roadmap')}
-              className="flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.1] border border-slate-200/80 dark:border-white/10 transition-all cursor-pointer"
+              className="nexora-hero-secondary flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.1] border border-slate-200/80 dark:border-white/10 transition-all cursor-pointer"
             >
               <Milestone className="w-4 h-4 text-blue-500" />
               <span>View Active Roadmap</span>
