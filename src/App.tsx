@@ -4,6 +4,7 @@
  */
 
 import React, { useState } from 'react';
+import { ClerkProvider, Show, SignInButton, SignUpButton } from '@clerk/react';
 import { ThemeProvider } from './context/ThemeContext';
 import { ProjectProvider, useProjects } from './context/ProjectContext';
 import {
@@ -55,7 +56,7 @@ const AppShell: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen w-full bg-slate-50 dark:bg-[#080c16] text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row relative liquid-mesh-bg selection:bg-violet-500/20 selection:text-violet-600 dark:selection:text-violet-300">
+    <div className="min-h-screen w-full bg-slate-50 dark:bg-[#080c16] text-slate-900 dark:text-slate-100 flex flex-col lg:flex-row relative liquid-mesh-bg selection:bg-blue-500/25 selection:text-blue-700 dark:selection:text-cyan-200">
       {/* Desktop Navigation Sidebar with shortcuts trigger */}
       <DesktopSidebar onOpenShortcuts={() => setShowShortcutsModal(true)} />
 
@@ -105,12 +106,60 @@ const AppShell: React.FC = () => {
   );
 };
 
-export default function App() {
+const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+function ClerkSetupRequired() {
   return (
-    <ThemeProvider>
-      <ProjectProvider>
-        <AppShell />
-      </ProjectProvider>
-    </ThemeProvider>
+    <main className="min-h-screen flex items-center justify-center bg-slate-950 px-6 py-12 text-white">
+      <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 shadow-2xl">
+        <div className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">NEXORA AI · V2</div>
+        <h1 className="mt-3 text-3xl font-bold">Authentication setup required</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-300">
+          Add the Clerk publishable key to this Vercel environment to enable secure sign-in.
+          The workspace stays locked until authentication is configured.
+        </p>
+        <p className="mt-5 rounded-xl bg-black/30 p-3 font-mono text-xs text-cyan-200">
+          VITE_CLERK_PUBLISHABLE_KEY
+        </p>
+      </section>
+    </main>
   );
+}
+
+function ClerkAuthExperience() {
+  return (
+    <ClerkProvider publishableKey={clerkPublishableKey}>
+      <Show when="signed-in">
+        <ThemeProvider>
+          <ProjectProvider>
+            <AppShell />
+          </ProjectProvider>
+        </ThemeProvider>
+      </Show>
+      <Show when="signed-out">
+        <main className="min-h-screen flex items-center justify-center bg-slate-950 px-6 py-12 text-white">
+          <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.04] p-8 text-center shadow-2xl">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">NEXORA AI</div>
+            <h1 className="mt-3 text-3xl font-bold">Your software command centre</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-300">
+              Sign in to access your projects, architecture plans, roadmaps and AI tools.
+            </p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <SignInButton mode="modal">
+                <button className="rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20">Sign in</button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="rounded-xl border border-white/15 bg-white/[0.06] px-6 py-3 text-sm font-semibold text-white hover:bg-white/10">Create account</button>
+              </SignUpButton>
+            </div>
+          </section>
+        </main>
+      </Show>
+    </ClerkProvider>
+  );
+}
+
+export default function App() {
+  if (!clerkPublishableKey) return <ClerkSetupRequired />;
+  return <ClerkAuthExperience />;
 }

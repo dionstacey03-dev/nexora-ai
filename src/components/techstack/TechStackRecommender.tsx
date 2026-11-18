@@ -113,7 +113,7 @@ export const TechStackRecommender: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-300 border border-violet-500/20 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/20 text-xs font-semibold">
             <Cpu className="w-3.5 h-3.5" />
             <span>AI Architecture Advisor</span>
           </div>
@@ -208,7 +208,7 @@ export const TechStackRecommender: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-md shadow-violet-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0"
+            className="w-full sm:w-auto px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0"
           >
             {isLoading ? (
               <>
@@ -227,8 +227,8 @@ export const TechStackRecommender: React.FC = () => {
 
       {/* Recommendations Cards Grid */}
       {isLoading ? (
-        <div className="p-12 rounded-3xl glass-surface border border-violet-500/30 text-center space-y-4">
-          <Loader2 className="w-8 h-8 text-violet-500 animate-spin mx-auto" />
+        <div className="p-12 rounded-3xl glass-surface border border-blue-500/30 text-center space-y-4">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" />
           <p className="text-xs text-slate-500">
             Synthesizing optimal tech stack matrix with Gemini 3.8 Flash...
           </p>
@@ -238,13 +238,13 @@ export const TechStackRecommender: React.FC = () => {
           {recommendations.map((group, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-lg space-y-4 hover:border-violet-500/30 transition-all"
+              className="p-6 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-lg space-y-4 hover:border-blue-500/30 transition-all"
             >
               {/* Card Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200/70 dark:border-white/10">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2 h-2 rounded-full bg-violet-500" />
-                  <span className="text-xs font-mono uppercase font-bold text-violet-500">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-xs font-mono uppercase font-bold text-blue-500">
                     {group.category}
                   </span>
                   <span className="text-slate-300 dark:text-slate-700">/</span>
@@ -262,8 +262,8 @@ export const TechStackRecommender: React.FC = () => {
                 <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
                   {group.primary.description}
                 </p>
-                <div className="p-3.5 rounded-2xl bg-violet-500/5 dark:bg-violet-500/10 border border-violet-500/15 text-xs text-slate-800 dark:text-slate-200 space-y-1">
-                  <span className="text-[10px] font-mono uppercase font-bold text-violet-500 block">
+                <div className="p-3.5 rounded-2xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/15 text-xs text-slate-800 dark:text-slate-200 space-y-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-blue-500 block">
                     Architectural Rationale:
                   </span>
                   <p className="leading-relaxed">{group.primary.whyChoose}</p>

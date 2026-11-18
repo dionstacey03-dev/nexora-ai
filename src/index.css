@@ -13,7 +13,7 @@
   .dark {
     --bg-primary: #070b14;
     --bg-surface: rgba(11, 18, 33, 0.82);
-    --border-color: rgba(139, 92, 246, 0.16);
+    --border-color: rgba(59, 130, 246, 0.16);
   }
 
   html {
@@ -45,7 +45,7 @@
   background: rgba(11, 18, 33, 0.80);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(59, 130, 246, 0.16);
   box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -61,7 +61,7 @@
   background: rgba(15, 23, 42, 0.75);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(139, 92, 246, 0.22);
+  border: 1px solid rgba(59, 130, 246, 0.22);
 }
 
 .glass-floating-nav {
@@ -77,13 +77,13 @@
   background: rgba(10, 16, 29, 0.88);
   backdrop-filter: blur(24px) saturate(190%);
   -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(139, 92, 246, 0.24);
-  box-shadow: 0 16px 44px -10px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(139, 92, 246, 0.15) inset;
+  border: 1px solid rgba(59, 130, 246, 0.24);
+  box-shadow: 0 16px 44px -10px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(59, 130, 246, 0.15) inset;
 }
 
 /* NEXORA Glowing Highlights */
 .nexora-glow-violet {
-  box-shadow: 0 0 24px -2px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 0 24px -2px rgba(59, 130, 246, 0.35);
 }
 
 .nexora-glow-blue {
@@ -93,8 +93,8 @@
 /* Ambient Futuristic AI Mesh Background */
 .liquid-mesh-bg {
   background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, rgba(96, 165, 250, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
     radial-gradient(at 50% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
     radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.06) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.07) 0px, transparent 50%);
@@ -104,9 +104,9 @@
 .dark .liquid-mesh-bg {
   background-image: 
     radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.16) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.18) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.18) 0px, transparent 50%),
     radial-gradient(at 50% 50%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(124, 58, 237, 0.14) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.14) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.14) 0px, transparent 50%);
 }
 
@@ -138,4 +138,207 @@
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+
+/* V2 visual system — Midnight / Electric Blue / Aurora Cyan */
+:root {
+  --nexora-ink: #080b18;
+  --nexora-panel: #10162a;
+  --nexora-violet: #3b82f6;
+  --nexora-cyan: #22d3ee;
+  --nexora-border: rgba(148, 163, 184, 0.16);
+  --nexora-muted: #94a3b8;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--bg-primary);
+}
+
+.dark {
+  --bg-primary: #080b18;
+  --bg-surface: rgba(16, 22, 42, 0.82);
+  --border-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark body {
+  background-color: #080b18;
+  background-image:
+    radial-gradient(ellipse at 12% 0%, rgba(37, 99, 235, 0.12), transparent 38%),
+    radial-gradient(ellipse at 88% 8%, rgba(6, 182, 212, 0.09), transparent 34%);
+  background-attachment: fixed;
+}
+
+.dark .glass-surface {
+  background: linear-gradient(145deg, rgba(18, 25, 47, 0.92), rgba(11, 16, 32, 0.88));
+  border-color: rgba(148, 163, 184, 0.14);
+  box-shadow: 0 18px 48px -28px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+
+.dark .glass-pill {
+  background: rgba(19, 27, 49, 0.82);
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.dark .glass-floating-nav {
+  background: rgba(10, 15, 30, 0.92);
+  border-color: rgba(34, 211, 238, 0.2);
+  box-shadow: 0 18px 48px -18px rgba(0, 0, 0, 0.9), 0 0 28px -18px rgba(34, 211, 238, 0.35);
+}
+
+.dark .liquid-mesh-bg {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.18) 0, transparent 42%),
+    radial-gradient(at 100% 0%, rgba(34, 211, 238, 0.13) 0, transparent 38%),
+    radial-gradient(at 50% 65%, rgba(96, 165, 250, 0.07) 0, transparent 48%),
+    radial-gradient(at 0% 100%, rgba(37, 99, 235, 0.11) 0, transparent 42%);
+}
+
+.nexora-glow-cyan {
+  box-shadow: 0 0 26px -5px rgba(34, 211, 238, 0.42);
+}
+
+.dark ::selection {
+  background: rgba(59, 130, 246, 0.38);
+  color: #f8fafc;
+}
+
+:where(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.85);
+  outline-offset: 3px;
+}
+
+:where(button, a) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glass-surface, .glass-pill, .glass-floating-nav {
+    transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  }
+}
+
+
+/* NEXORA premium command-centre refinement */
+.nexora-dashboard {
+  isolation: isolate;
+}
+.nexora-dashboard > .nexora-hero {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(34, 211, 238, .14), transparent 34%),
+    radial-gradient(ellipse at 70% 90%, rgba(59, 130, 246, .18), transparent 42%),
+    linear-gradient(135deg, rgba(15, 25, 48, .98), rgba(8, 14, 29, .96));
+  border: 1px solid rgba(96, 165, 250, .22);
+  box-shadow: 0 30px 90px -48px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255,255,255,.07);
+}
+.dark .nexora-dashboard > .nexora-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .18;
+  background-image: linear-gradient(rgba(148,163,184,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.12) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(90deg, black, transparent 78%);
+}
+.nexora-dashboard .nexora-hero h1 {
+  letter-spacing: -.045em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.nexora-dashboard .nexora-hero button:first-child,
+.nexora-dashboard .nexora-hero button[type="submit"] {
+  box-shadow: 0 12px 30px -12px rgba(37, 99, 235, .75), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.nexora-dashboard .nexora-metric-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.35rem;
+  transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease;
+}
+.nexora-dashboard .nexora-metric-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  right: 1.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34,211,238,.55), transparent);
+  opacity: .55;
+}
+.dark .nexora-dashboard .nexora-metric-card {
+  background: linear-gradient(150deg, rgba(18, 28, 52, .92), rgba(10, 16, 31, .94));
+  border-color: rgba(148, 163, 184, .15);
+  box-shadow: 0 18px 45px -34px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.nexora-dashboard .nexora-metric-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(34,211,238,.38);
+  box-shadow: 0 22px 50px -34px rgba(34,211,238,.38);
+}
+.nexora-dashboard input {
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.nexora-dashboard input:focus {
+  box-shadow: 0 0 0 4px rgba(59,130,246,.12), 0 0 28px -16px rgba(34,211,238,.65);
+}
+.dark .nexora-dashboard h2 {
+  letter-spacing: -.035em;
+}
+@media (max-width: 640px) {
+  .nexora-dashboard > .nexora-hero {
+    border-radius: 1.4rem;
+  }
+  .nexora-dashboard .nexora-metric-card:hover {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nexora-dashboard .nexora-metric-card,
+  .nexora-dashboard input {
+    transition: none;
+  }
+}
+
+
+/* Contrast fix: the command-centre hero stays dark in both app themes */
+.nexora-dashboard .nexora-hero {
+  color: #f8fafc;
+}
+.nexora-dashboard .nexora-hero h1 {
+  color: #f8fafc !important;
+}
+.nexora-dashboard .nexora-hero p {
+  color: #cbd5e1 !important;
+}
+.nexora-dashboard .nexora-hero p span {
+  color: #7dd3fc !important;
+}
+.nexora-dashboard .nexora-hero form {
+  border-color: rgba(148, 163, 184, .24) !important;
+}
+.nexora-dashboard .nexora-hero input {
+  color: #f8fafc !important;
+  background: rgba(7, 14, 29, .72) !important;
+  border-color: rgba(148, 163, 184, .28) !important;
+  caret-color: #22d3ee;
+}
+.nexora-dashboard .nexora-hero input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+.nexora-dashboard .nexora-hero .nexora-hero-secondary {
+  color: #e2e8f0 !important;
+  background: rgba(30, 41, 59, .78) !important;
+  border-color: rgba(148, 163, 184, .28) !important;
+}
+.nexora-dashboard .nexora-hero .nexora-hero-secondary:hover {
+  background: rgba(51, 65, 85, .88) !important;
+  border-color: rgba(34, 211, 238, .5) !important;
 }

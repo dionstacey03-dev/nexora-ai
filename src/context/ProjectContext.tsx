@@ -48,11 +48,11 @@ const DEFAULT_SETTINGS: UserSettings = {
   aiModel: 'gemini-3.8-flash',
   autoSave: true,
   userProfile: {
-    name: 'Alex Rivera',
-    role: 'Principal Software Architect',
-    organization: 'Nexora Systems',
-    bio: 'Building hyper-scalable distributed cloud platforms & intelligent developer tooling.',
-    githubUsername: 'arivera-dev',
+    name: '',
+    role: '',
+    organization: '',
+    bio: '',
+    githubUsername: '',
   },
 };
 
@@ -286,13 +286,58 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     codeType: string;
     projectName: string;
   }) => {
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+      body: JSON.stringify(params),
+    };
+
     try {
+      const streamResponse = await fetch('/api/generate-code/stream', requestOptions);
+      if (streamResponse.ok && streamResponse.body) {
+        const reader = streamResponse.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let generated = '';
+        let streamFailed = false;
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split(/\r?\n\r?\n/);
+          buffer = events.pop() || '';
+          for (const event of events) {
+            const line = event.split(/\\r?\\n/).find((item) => item.startsWith('data: '));
+            if (!line) continue;
+            try {
+              const payload = JSON.parse(line.slice(6));
+              if (payload.type === 'delta' && typeof payload.text === 'string') generated += payload.text;
+              if (payload.type === 'error') streamFailed = true;
+            } catch {
+              streamFailed = true;
+            }
+          }
+        }
+
+        if (!streamFailed && generated.trim()) {
+          try {
+            return JSON.parse(generated);
+          } catch {
+            throw new Error('The streaming model returned an invalid response.');
+          }
+        }
+      }
+
+      // Preserve the existing non-streaming path as a compatibility fallback.
       const response = await fetch('/api/generate-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(params),
       });
-      return await response.json();
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.error || 'Code generation failed.');
+      return data;
     } catch (e) {
       console.error('Code generation failed:', e);
       return {

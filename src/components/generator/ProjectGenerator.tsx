@@ -114,7 +114,7 @@ export const ProjectGenerator: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 animate-fade-in">
       {/* Header */}
       <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-300 border border-violet-500/20 text-xs font-semibold">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/20 text-xs font-semibold">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Intelligent System Architecture Synthesizer</span>
         </div>
@@ -132,7 +132,7 @@ export const ProjectGenerator: React.FC = () => {
         <div className="lg:col-span-5 space-y-6">
           <div className="p-6 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-xl space-y-5">
             <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-violet-500" />
+              <Terminal className="w-4 h-4 text-blue-500" />
               <span>Project Parameters</span>
             </h2>
 
@@ -140,14 +140,14 @@ export const ProjectGenerator: React.FC = () => {
               {/* Project Idea */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-mono">
-                  1. Project Concept / Idea <span className="text-violet-500">*</span>
+                  1. Project Concept / Idea <span className="text-blue-500">*</span>
                 </label>
                 <textarea
                   rows={3}
                   value={idea}
                   onChange={(e) => setIdea(e.target.value)}
                   placeholder="Describe your software concept (e.g. Distributed database with CRDT replication for edge runtimes)..."
-                  className="w-full p-3 rounded-2xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 transition-all resize-none"
+                  className="w-full p-3 rounded-2xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all resize-none"
                   required
                 />
 
@@ -160,7 +160,7 @@ export const ProjectGenerator: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => setIdea(sample)}
-                        className="text-[10px] px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/[0.05] hover:bg-violet-500/10 hover:text-violet-500 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-white/5 transition-all cursor-pointer text-left truncate max-w-full"
+                        className="text-[10px] px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/[0.05] hover:bg-blue-500/10 hover:text-blue-500 text-slate-600 dark:text-slate-400 border border-slate-200/60 dark:border-white/5 transition-all cursor-pointer text-left truncate max-w-full"
                       >
                         {sample}
                       </button>
@@ -178,7 +178,7 @@ export const ProjectGenerator: React.FC = () => {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value as ProjectCategory)}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-violet-500 cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   >
                     <option value="fullstack-saas">Full-Stack SaaS</option>
                     <option value="developer-tool">Developer Tool</option>
@@ -198,7 +198,7 @@ export const ProjectGenerator: React.FC = () => {
                   <select
                     value={primaryLanguage}
                     onChange={(e) => setPrimaryLanguage(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-violet-500 cursor-pointer"
+                    className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 cursor-pointer"
                   >
                     <option value="TypeScript">TypeScript (Node / Next.js)</option>
                     <option value="Python">Python (FastAPI / PyTorch)</option>
@@ -219,7 +219,7 @@ export const ProjectGenerator: React.FC = () => {
                   value={targetAudience}
                   onChange={(e) => setTargetAudience(e.target.value)}
                   placeholder="e.g. Enterprise Engineering Teams, Solo Developers..."
-                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-violet-500"
+                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="flex flex-wrap gap-1 pt-0.5">
                   {AUDIENCE_SUGGESTIONS.map((aud, i) => (
@@ -227,7 +227,7 @@ export const ProjectGenerator: React.FC = () => {
                       key={i}
                       type="button"
                       onClick={() => setTargetAudience(aud)}
-                      className="text-[9px] px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-violet-500"
+                      className="text-[9px] px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-blue-500"
                     >
                       {aud}
                     </button>
@@ -253,8 +253,8 @@ export const ProjectGenerator: React.FC = () => {
                       onClick={() => setComplexity(lvl.id as ProjectComplexity)}
                       className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                         complexity === lvl.id
-                          ? 'border-violet-500 bg-violet-500/10 text-violet-600 dark:text-violet-300 font-semibold'
-                          : 'border-slate-200/80 dark:border-white/10 hover:border-violet-500/30 text-slate-600 dark:text-slate-400'
+                          ? 'border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-300 font-semibold'
+                          : 'border-slate-200/80 dark:border-white/10 hover:border-blue-500/30 text-slate-600 dark:text-slate-400'
                       }`}
                     >
                       <div className="text-xs font-bold">{lvl.label}</div>
@@ -274,7 +274,7 @@ export const ProjectGenerator: React.FC = () => {
                   value={additionalRequirements}
                   onChange={(e) => setAdditionalRequirements(e.target.value)}
                   placeholder="e.g. Real-time WebSockets, Redis caching, Stripe billing, Zero-Trust RBAC"
-                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-violet-500"
+                  className="w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export const ProjectGenerator: React.FC = () => {
               <button
                 type="submit"
                 disabled={isGenerating}
-                className="w-full py-3.5 px-4 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-lg shadow-violet-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-lg shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {isGenerating ? (
                   <>
@@ -304,12 +304,12 @@ export const ProjectGenerator: React.FC = () => {
         <div className="lg:col-span-7 space-y-6">
           {/* Active Generation Indicator */}
           {isGenerating && (
-            <div className="p-8 rounded-3xl glass-surface border border-violet-500/40 shadow-2xl text-center space-y-5 animate-pulse">
-              <div className="w-16 h-16 rounded-3xl bg-violet-600/20 text-violet-500 mx-auto flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <div className="p-8 rounded-3xl glass-surface border border-blue-500/40 shadow-2xl text-center space-y-5 animate-pulse">
+              <div className="w-16 h-16 rounded-3xl bg-blue-600/20 text-blue-500 mx-auto flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Loader2 className="w-8 h-8 animate-spin" />
               </div>
               <div className="space-y-1.5 max-w-md mx-auto">
-                <span className="text-xs font-mono uppercase tracking-widest text-violet-400 font-bold">
+                <span className="text-xs font-mono uppercase tracking-widest text-blue-400 font-bold">
                   Gemini 3.8 Flash Synthesizer
                 </span>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -321,7 +321,7 @@ export const ProjectGenerator: React.FC = () => {
               </div>
 
               <div className="max-w-xs mx-auto w-full bg-slate-200 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
-                <div className="bg-gradient-to-r from-violet-500 via-indigo-500 to-blue-500 h-full w-2/3 animate-shimmer" />
+                <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500 h-full w-2/3 animate-shimmer" />
               </div>
             </div>
           )}
@@ -352,7 +352,7 @@ export const ProjectGenerator: React.FC = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => selectProject(proj.id, 'roadmap')}
-                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 shadow-md shadow-violet-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
                         >
                           <Milestone className="w-3.5 h-3.5" />
                           <span>Roadmap</span>
@@ -369,7 +369,7 @@ export const ProjectGenerator: React.FC = () => {
                           title="Export as PDF Document or JSON Specification"
                           className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 transition-all flex items-center gap-1.5 cursor-pointer"
                         >
-                          <Download className="w-3.5 h-3.5 text-violet-500" />
+                          <Download className="w-3.5 h-3.5 text-blue-500" />
                           <span>Export PDF / JSON</span>
                         </button>
                       </div>
@@ -393,7 +393,7 @@ export const ProjectGenerator: React.FC = () => {
                             onClick={() => setActiveResultTab(tab.id as any)}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                               isActive
-                                ? 'bg-violet-600 text-white shadow-md shadow-violet-500/20'
+                                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
                                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
                             }`}
                           >
@@ -410,7 +410,7 @@ export const ProjectGenerator: React.FC = () => {
                       {activeResultTab === 'overview' && (
                         <div className="space-y-4">
                           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 space-y-1.5">
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-violet-500 font-mono">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-blue-500 font-mono">
                               System Description
                             </span>
                             <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
@@ -485,7 +485,7 @@ export const ProjectGenerator: React.FC = () => {
                                       <span className="text-xs font-bold text-slate-900 dark:text-white">
                                         {feat.title}
                                       </span>
-                                      <span className="text-[9px] uppercase px-1.5 py-0.2 rounded font-mono font-semibold bg-violet-500/10 text-violet-500">
+                                      <span className="text-[9px] uppercase px-1.5 py-0.2 rounded font-mono font-semibold bg-blue-500/10 text-blue-500">
                                         {feat.priority}
                                       </span>
                                       <span className="text-[9px] uppercase px-1.5 py-0.2 rounded font-mono font-semibold bg-slate-200/60 dark:bg-white/10 text-slate-500">
@@ -543,7 +543,7 @@ export const ProjectGenerator: React.FC = () => {
                             >
                               <div className="space-y-1 flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 border border-violet-500/20">
+                                  <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                                     {tech.category}
                                   </span>
                                   <h4 className="text-xs font-bold text-slate-900 dark:text-white">
@@ -577,7 +577,7 @@ export const ProjectGenerator: React.FC = () => {
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <Database className="w-4 h-4 text-violet-500" />
+                                  <Database className="w-4 h-4 text-blue-500" />
                                   <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono">
                                     {entity.name}
                                   </h4>
@@ -604,7 +604,7 @@ export const ProjectGenerator: React.FC = () => {
                                   <tbody className="divide-y divide-slate-200/50 dark:divide-white/5">
                                     {entity.fields.map((field, fIdx) => (
                                       <tr key={fIdx} className="text-slate-700 dark:text-slate-300">
-                                        <td className="py-1.5 font-mono font-semibold text-violet-500">
+                                        <td className="py-1.5 font-mono font-semibold text-blue-500">
                                           {field.name}
                                         </td>
                                         <td className="py-1.5 font-mono text-slate-500">{field.type}</td>
@@ -692,7 +692,7 @@ export const ProjectGenerator: React.FC = () => {
                             </span>
                             <button
                               onClick={() => selectProject(proj.id, 'roadmap')}
-                              className="text-xs font-bold text-violet-500 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-xs font-bold text-blue-500 hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <span>Open Interactive Roadmap Builder</span>
                               <ChevronRight className="w-3.5 h-3.5" />
@@ -707,7 +707,7 @@ export const ProjectGenerator: React.FC = () => {
                               >
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-violet-600 text-white font-mono">
+                                    <span className="text-xs font-bold px-2 py-0.5 rounded-lg bg-blue-600 text-white font-mono">
                                       Phase {phase.phaseNumber}
                                     </span>
                                     <h4 className="text-xs font-bold text-slate-900 dark:text-white">
@@ -756,7 +756,7 @@ export const ProjectGenerator: React.FC = () => {
           {/* Empty state if nothing generated yet */}
           {!isGenerating && !generatedResult && !currentProject && (
             <div className="p-12 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 text-center space-y-4">
-              <div className="w-16 h-16 rounded-3xl bg-violet-500/10 text-violet-500 mx-auto flex items-center justify-center">
+              <div className="w-16 h-16 rounded-3xl bg-blue-500/10 text-blue-500 mx-auto flex items-center justify-center">
                 <Sparkles className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">

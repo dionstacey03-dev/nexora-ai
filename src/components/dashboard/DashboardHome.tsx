@@ -68,7 +68,7 @@ export const DashboardHome: React.FC = () => {
         );
       case 'architecture_ready':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-500/10 text-violet-500 border border-violet-500/20">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500 border border-blue-500/20">
             <Cpu className="w-3 h-3" /> Architecture Ready
           </span>
         );
@@ -94,14 +94,14 @@ export const DashboardHome: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 animate-fade-in">
+    <div className="nexora-dashboard max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 animate-fade-in">
       {/* 1. Welcome Section */}
-      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 glass-surface border border-slate-200/80 dark:border-white/10 shadow-xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-violet-600/15 via-blue-600/10 to-transparent blur-3xl pointer-events-none rounded-full" />
+      <div className="nexora-hero relative overflow-hidden rounded-3xl p-6 sm:p-8 glass-surface border border-slate-200/80 dark:border-white/10 shadow-xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-600/15 via-blue-600/10 to-transparent blur-3xl pointer-events-none rounded-full" />
         
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-300 border border-violet-500/20 text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-300 border border-blue-500/20 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Next-Gen Systems Architecture Engine</span>
             </div>
@@ -109,7 +109,7 @@ export const DashboardHome: React.FC = () => {
               Transform Ideas Into Production-Ready Systems.
             </h1>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium">
-              Welcome back, <span className="font-semibold text-violet-600 dark:text-violet-400">{userSettings.userProfile.name}</span>. 
+              Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{userSettings.userProfile.name}</span>. 
               NEXORA AI orchestrates complete system designs, relational schemas, REST APIs, and granular roadmaps in seconds.
             </p>
           </div>
@@ -117,16 +117,16 @@ export const DashboardHome: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setActiveTab('generator')}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-lg shadow-violet-500/30 transition-all cursor-pointer hover:scale-[1.02]"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-lg shadow-blue-500/30 transition-all cursor-pointer hover:scale-[1.02]"
             >
               <Sparkles className="w-4 h-4" />
               <span>Synthesize Project</span>
             </button>
             <button
               onClick={() => setActiveTab('roadmap')}
-              className="flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.1] border border-slate-200/80 dark:border-white/10 transition-all cursor-pointer"
+              className="nexora-hero-secondary flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100/80 dark:bg-white/[0.06] hover:bg-slate-200/80 dark:hover:bg-white/[0.1] border border-slate-200/80 dark:border-white/10 transition-all cursor-pointer"
             >
-              <Milestone className="w-4 h-4 text-violet-500" />
+              <Milestone className="w-4 h-4 text-blue-500" />
               <span>View Active Roadmap</span>
             </button>
           </div>
@@ -143,12 +143,12 @@ export const DashboardHome: React.FC = () => {
               value={quickIdea}
               onChange={(e) => setQuickIdea(e.target.value)}
               placeholder="e.g. Distributed edge rate-limiter with Redis, or Multi-tenant billing SaaS..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/15 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-violet-500 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/80 dark:border-white/15 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
           <button
             type="submit"
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-violet-600 hover:bg-violet-500 transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-violet-500/20"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 transition-all shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-blue-500/20"
           >
             <span>Launch Generator</span>
             <ArrowRight className="w-4 h-4" />
@@ -159,9 +159,9 @@ export const DashboardHome: React.FC = () => {
       {/* 2. Key Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Total Projects */}
-        <div className="p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-violet-500/40 transition-all">
+        <div className="nexora-metric-card p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-blue-500/40 transition-all">
           <div className="flex items-center justify-between">
-            <div className="p-2.5 rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-400">
+            <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <FolderKanban className="w-5 h-5" />
             </div>
             <span className="text-[11px] font-semibold text-emerald-500 flex items-center gap-1">
@@ -182,7 +182,7 @@ export const DashboardHome: React.FC = () => {
         </div>
 
         {/* In Progress */}
-        <div className="p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-blue-500/40 transition-all">
+        <div className="nexora-metric-card p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-blue-500/40 transition-all">
           <div className="flex items-center justify-between">
             <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400">
               <Activity className="w-5 h-5" />
@@ -224,7 +224,7 @@ export const DashboardHome: React.FC = () => {
         </div>
 
         {/* Overall Completion Rate */}
-        <div className="p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-violet-500/40 transition-all">
+        <div className="nexora-metric-card p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 shadow-sm relative group hover:border-blue-500/40 transition-all">
           <div className="flex items-center justify-between">
             <div className="p-2.5 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
               <Milestone className="w-5 h-5" />
@@ -243,7 +243,7 @@ export const DashboardHome: React.FC = () => {
           </div>
           <div className="mt-3 w-full bg-slate-200/70 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-gradient-to-r from-violet-500 to-indigo-500 h-full rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500"
               style={{ width: `${Math.max(5, overallProgress)}%` }}
             />
           </div>
@@ -265,7 +265,7 @@ export const DashboardHome: React.FC = () => {
             </div>
             <button
               onClick={() => setActiveTab('projects')}
-              className="text-xs font-semibold text-violet-600 dark:text-violet-400 hover:underline flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>View all ({projects.length})</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -279,12 +279,12 @@ export const DashboardHome: React.FC = () => {
                 <div
                   key={project.id}
                   onClick={() => selectProject(project.id, 'roadmap')}
-                  className="p-5 rounded-2xl glass-surface border border-slate-200/80 dark:border-white/10 hover:border-violet-500/40 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                  className="p-5 rounded-2xl glass-surface border border-slate-200/80 dark:border-white/10 hover:border-blue-500/40 hover:shadow-lg transition-all duration-200 cursor-pointer group"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2.5">
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {project.name}
                         </h3>
                         {getStatusBadge(project.status)}
@@ -306,11 +306,11 @@ export const DashboardHome: React.FC = () => {
                       </div>
                       <div className="w-20 bg-slate-200/80 dark:bg-white/10 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-violet-500 to-blue-500 h-full rounded-full transition-all duration-300"
+                          className="bg-gradient-to-r from-blue-500 to-blue-500 h-full rounded-full transition-all duration-300"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-violet-500 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-blue-500 transition-all" />
                     </div>
                   </div>
 
@@ -342,7 +342,7 @@ export const DashboardHome: React.FC = () => {
                           e.stopPropagation();
                           selectProject(project.id, 'readmestudio');
                         }}
-                        className="text-[11px] font-semibold text-violet-500 hover:text-violet-400 flex items-center gap-1"
+                        className="text-[11px] font-semibold text-blue-500 hover:text-blue-400 flex items-center gap-1"
                       >
                         <FileCode className="w-3 h-3" /> README
                       </button>
@@ -372,7 +372,7 @@ export const DashboardHome: React.FC = () => {
 
           <div className="p-5 rounded-3xl glass-surface border border-slate-200/80 dark:border-white/10 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 to-blue-600 text-white flex items-center justify-center shadow-md shadow-violet-500/20">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20">
                 <Cpu className="w-5 h-5" />
               </div>
               <div>
@@ -392,19 +392,19 @@ export const DashboardHome: React.FC = () => {
 
             <div className="space-y-2.5">
               <div className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-violet-500 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
                 <span><strong>Relational DB Schemas</strong>: Typed PostgreSQL/Drizzle entity definitions & foreign keys.</span>
               </div>
               <div className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-violet-500 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
                 <span><strong>REST & GraphQL APIs</strong>: Typed payload schemas and HTTP status specifications.</span>
               </div>
               <div className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-violet-500 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
                 <span><strong>Phased Roadmaps</strong>: Milestone estimation, sprint tasks, and timeline checklists.</span>
               </div>
               <div className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-violet-500 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
                 <span><strong>Starter Code</strong>: Express controllers, React components, and environment files.</span>
               </div>
             </div>
@@ -421,9 +421,9 @@ export const DashboardHome: React.FC = () => {
           </div>
 
           {/* Quick Stats Pill */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-violet-600/10 via-indigo-600/10 to-blue-600/10 border border-violet-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-600/10 via-indigo-600/10 to-blue-600/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
             <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-violet-500" />
+              <Zap className="w-4 h-4 text-blue-500" />
               <span>Architectural Philosophy</span>
             </div>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">

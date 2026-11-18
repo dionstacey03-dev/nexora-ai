@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
+import { isPlainObject, isOptionalString } from './src/server/requestValidation';
+import { clerkMiddleware, getAuth } from '@clerk/express';
 
 dotenv.config();
 
@@ -11,6 +13,39 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+if (process.env.VERCEL === '1') app.set('trust proxy', 1);
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'nexora-ai' }));
+
+// Clerk verifies the browser session cookie or bearer token for every API request.
+if (process.env.CLERK_SECRET_KEY) {
+  app.use('/api', clerkMiddleware());
+}
+
+app.use('/api', (req: Request, res: Response, next) => {
+  if (req.path === '/health') return next();
+  if (!process.env.CLERK_SECRET_KEY) {
+    return res.status(503).json({ error: 'Clerk authentication is not configured.', code: 'CLERK_NOT_CONFIGURED' });
+  }
+  const { isAuthenticated, userId } = getAuth(req);
+  if (!isAuthenticated || !userId) {
+    return res.status(401).json({ error: 'Sign in is required to use NEXORA AI.', code: 'UNAUTHENTICATED' });
+  }
+  next();
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const { userId, sessionId, orgId, orgRole } = getAuth(req);
+  return res.json({ user: { id: userId, sessionId, organizationId: orgId, organizationRole: orgRole } });
+});
 
 // Keep incoming JSON payloads small to reduce memory and abuse risk.
 app.use(express.json({ limit: '1mb', strict: true }));
@@ -21,9 +56,39 @@ const API_RATE_WINDOW_MS = 15 * 60 * 1000;
 const API_RATE_MAX_REQUESTS = 20;
 const apiRequestCounts = new Map<string, { count: number; resetAt: number }>();
 
-app.use('/api', (req: Request, res: Response, next) => {
+app.use('/api', async (req: Request, res: Response, next) => {
   const now = Date.now();
   const clientKey = req.ip || req.socket.remoteAddress || 'unknown';
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/\/$/, '');
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (redisUrl && redisToken) {
+    try {
+      const key = `nexora:ratelimit:${Buffer.from(clientKey).toString('base64url')}`;
+      const script = "local count = redis.call('INCR', KEYS[1]); if count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]); end; return count";
+      const response = await fetch(redisUrl, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${redisToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(['EVAL', script, '1', key, String(API_RATE_WINDOW_MS / 1000)]),
+        signal: AbortSignal.timeout(2500),
+      });
+      if (!response.ok) throw new Error('Shared rate-limit store unavailable');
+      const result = await response.json() as { result?: number };
+      const count = Number(result.result);
+      if (!Number.isFinite(count)) throw new Error('Invalid shared rate-limit response');
+      res.setHeader('RateLimit-Limit', API_RATE_MAX_REQUESTS);
+      res.setHeader('RateLimit-Remaining', Math.max(0, API_RATE_MAX_REQUESTS - count));
+      if (count > API_RATE_MAX_REQUESTS) {
+        res.setHeader('Retry-After', Math.ceil(API_RATE_WINDOW_MS / 1000));
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+      return next();
+    } catch {
+      return res.status(503).json({ error: 'Shared rate limiting is temporarily unavailable.', code: 'RATE_LIMIT_STORE_UNAVAILABLE' });
+    }
+  }
+
+  // Local fallback is intended for development; production should configure Upstash.
   let entry = apiRequestCounts.get(clientKey);
   if (!entry || now >= entry.resetAt) {
     entry = { count: 0, resetAt: now + API_RATE_WINDOW_MS };
@@ -45,14 +110,6 @@ app.use('/api', (req: Request, res: Response, next) => {
   }
   next();
 });
-
-function isPlainObject(value: unknown): value is Record<string, any> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isOptionalString(value: unknown, maxLength: number): boolean {
-  return value === undefined || (typeof value === 'string' && value.length <= maxLength);
-}
 
 // Initialize Google GenAI on server-side
 const ai = new GoogleGenAI({
@@ -908,7 +965,52 @@ Return JSON:
   }
 });
 
-// 4. README STUDIO GENERATOR ENDPOINT
+// 4. STREAMING CODE GENERATION ENDPOINT (SSE)
+app.post('/api/generate-code/stream', async (req: Request, res: Response) => {
+  if (!isPlainObject(req.body)) return res.status(400).json({ error: 'A valid JSON object is required.' });
+  const { prompt, language = 'typescript', codeType = 'component', projectName = 'Project' } = req.body;
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 8000) {
+    return res.status(400).json({ error: 'Prompt must be between 1 and 8000 characters.' });
+  }
+  if (!isOptionalString(language, 80) || !isOptionalString(codeType, 80) || !isOptionalString(projectName, 120)) {
+    return res.status(400).json({ error: 'Code generation options are invalid or too long.' });
+  }
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(503).json({ error: 'Streaming AI requires GEMINI_API_KEY.', code: 'AI_NOT_CONFIGURED' });
+  }
+
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders?.();
+
+  const send = (event: Record<string, unknown>) => {
+    if (!res.destroyed) res.write(`data: ${JSON.stringify(event)}\n\n`);
+  };
+
+  try {
+    const response = await ai.models.generateContentStream({
+      model: 'gemini-3.8-flash',
+      contents: `You are a senior ${language} engineer. Generate complete, maintainable code for this request. Project: ${projectName}. Code type: ${codeType}. Specification: ${prompt}. Validate inputs, handle errors, avoid hardcoded secrets, preserve stated interfaces, and explain assumptions. Return JSON with keys code, explanation, filename.`,
+      config: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 4096 },
+    });
+    for await (const chunk of response) {
+      const text = chunk.text || '';
+      if (text) send({ type: 'delta', text });
+      if (res.destroyed) break;
+    }
+    send({ type: 'done' });
+    res.end();
+  } catch (error) {
+    console.error('Streaming code generation failed:', error);
+    send({ type: 'error', error: 'Streaming generation failed. Please retry using standard generation.' });
+    res.end();
+  }
+});
+
+// 5. README STUDIO GENERATOR ENDPOINT
 app.post('/api/generate-readme', async (req: Request, res: Response) => {
   try {
     if (!isPlainObject(req.body) || !isPlainObject(req.body.project)) return res.status(400).json({ error: 'Valid project data is required.' });
@@ -952,8 +1054,11 @@ app.use((error: any, _req: Request, res: Response, next: (err?: any) => void) =>
   return next(error);
 });
 
-// MOUNT VITE IN DEV OR STATIC IN PROD
+// Export the same Express routes through Vercel's serverless function adapter.
+export { app };
+
 async function startServer() {
+  if (process.env.VERCEL === '1') return;
   if (process.env.NODE_ENV !== 'production') {
     const { createServer } = await import('vite');
     const vite = await createServer({
@@ -973,7 +1078,9 @@ async function startServer() {
   });
 }
 
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+if (process.env.VERCEL !== '1') {
+  startServer().catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });
+}
