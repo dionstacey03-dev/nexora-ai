@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
 import { isPlainObject, isOptionalString } from './src/server/requestValidation';
-import { verifyOidcBearerToken } from './src/server/oidcAuth';
+import { clerkMiddleware, getAuth } from '@clerk/express';
 
 dotenv.config();
 
@@ -25,14 +25,26 @@ app.use((_req, res, next) => {
 });
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'nexora-ai' }));
 
-app.get('/api/auth/me', async (req, res) => {
-  const config = { jwksUrl: process.env.AUTH_JWKS_URL, issuer: process.env.AUTH_ISSUER, audience: process.env.AUTH_AUDIENCE };
-  if (!config.jwksUrl || !config.issuer || !config.audience) {
-    return res.status(503).json({ error: 'Authentication is not configured yet.', code: 'AUTH_NOT_CONFIGURED' });
+// Clerk verifies the browser session cookie or bearer token for every API request.
+if (process.env.CLERK_SECRET_KEY) {
+  app.use('/api', clerkMiddleware());
+}
+
+app.use('/api', (req: Request, res: Response, next) => {
+  if (req.path === '/health') return next();
+  if (!process.env.CLERK_SECRET_KEY) {
+    return res.status(503).json({ error: 'Clerk authentication is not configured.', code: 'CLERK_NOT_CONFIGURED' });
   }
-  const identity = await verifyOidcBearerToken(req.headers.authorization, config);
-  if (!identity) return res.status(401).json({ error: 'A valid sign-in session is required.', code: 'UNAUTHENTICATED' });
-  return res.json({ user: identity });
+  const { isAuthenticated, userId } = getAuth(req);
+  if (!isAuthenticated || !userId) {
+    return res.status(401).json({ error: 'Sign in is required to use NEXORA AI.', code: 'UNAUTHENTICATED' });
+  }
+  next();
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const { userId, sessionId, orgId, orgRole } = getAuth(req);
+  return res.json({ user: { id: userId, sessionId, organizationId: orgId, organizationRole: orgRole } });
 });
 
 // Keep incoming JSON payloads small to reduce memory and abuse risk.
