@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GoogleGenAI, Type } from '@google/genai';
 import { isPlainObject, isOptionalString } from './src/server/requestValidation';
+import { verifyOidcBearerToken } from './src/server/oidcAuth';
 
 dotenv.config();
 
@@ -24,6 +25,16 @@ app.use((_req, res, next) => {
 });
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'nexora-ai' }));
 
+app.get('/api/auth/me', async (req, res) => {
+  const config = { jwksUrl: process.env.AUTH_JWKS_URL, issuer: process.env.AUTH_ISSUER, audience: process.env.AUTH_AUDIENCE };
+  if (!config.jwksUrl || !config.issuer || !config.audience) {
+    return res.status(503).json({ error: 'Authentication is not configured yet.', code: 'AUTH_NOT_CONFIGURED' });
+  }
+  const identity = await verifyOidcBearerToken(req.headers.authorization, config);
+  if (!identity) return res.status(401).json({ error: 'A valid sign-in session is required.', code: 'UNAUTHENTICATED' });
+  return res.json({ user: identity });
+});
+
 // Keep incoming JSON payloads small to reduce memory and abuse risk.
 app.use(express.json({ limit: '1mb', strict: true }));
 
@@ -36,7 +47,7 @@ const apiRequestCounts = new Map<string, { count: number; resetAt: number }>();
 app.use('/api', (req: Request, res: Response, next) => {
   const now = Date.now();
   const clientKey = req.ip || req.socket.remoteAddress || 'unknown';
-  let entry = apiRequestCounts.get(clientKey);
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL?.replace(/\\/$/, '');\n  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;\n  if (redisUrl && redisToken) {\n    try {\n      const key = `nexora:ratelimit:${Buffer.from(clientKey).toString('base64url')}`;\n      const script = \"local count = redis.call('INCR', KEYS[1]); if count == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]); end; return count\";\n      const response = await fetch(redisUrl, { method: 'POST', headers: { Authorization: `Bearer ${redisToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify(['EVAL', script, '1', key, String(API_RATE_WINDOW_MS / 1000)]), signal: AbortSignal.timeout(2500) });\n      if (!response.ok) throw new Error('Shared rate-limit store unavailable');\n      const result = await response.json() as { result?: number };\n      const count = Number(result.result);\n      if (!Number.isFinite(count)) throw new Error('Invalid shared rate-limit response');\n      res.setHeader('RateLimit-Limit', API_RATE_MAX_REQUESTS);\n      res.setHeader('RateLimit-Remaining', Math.max(0, API_RATE_MAX_REQUESTS - count));\n      if (count > API_RATE_MAX_REQUESTS) { res.setHeader('Retry-After', Math.ceil(API_RATE_WINDOW_MS / 1000)); return res.status(429).json({ error: 'Too many requests. Please try again later.' }); }\n      return next();\n    } catch {\n      return res.status(503).json({ error: 'Shared rate limiting is temporarily unavailable.', code: 'RATE_LIMIT_STORE_UNAVAILABLE' });\n    }\n  }\n  let entry = apiRequestCounts.get(clientKey);
   if (!entry || now >= entry.resetAt) {
     entry = { count: 0, resetAt: now + API_RATE_WINDOW_MS };
     apiRequestCounts.set(clientKey, entry);
@@ -912,7 +923,52 @@ Return JSON:
   }
 });
 
-// 4. README STUDIO GENERATOR ENDPOINT
+// 4. STREAMING CODE GENERATION ENDPOINT (SSE)
+app.post('/api/generate-code/stream', async (req: Request, res: Response) => {
+  if (!isPlainObject(req.body)) return res.status(400).json({ error: 'A valid JSON object is required.' });
+  const { prompt, language = 'typescript', codeType = 'component', projectName = 'Project' } = req.body;
+  if (typeof prompt !== 'string' || !prompt.trim() || prompt.length > 8000) {
+    return res.status(400).json({ error: 'Prompt must be between 1 and 8000 characters.' });
+  }
+  if (!isOptionalString(language, 80) || !isOptionalString(codeType, 80) || !isOptionalString(projectName, 120)) {
+    return res.status(400).json({ error: 'Code generation options are invalid or too long.' });
+  }
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(503).json({ error: 'Streaming AI requires GEMINI_API_KEY.', code: 'AI_NOT_CONFIGURED' });
+  }
+
+  res.status(200);
+  res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  res.flushHeaders?.();
+
+  const send = (event: Record<string, unknown>) => {
+    if (!res.destroyed) res.write(`data: ${JSON.stringify(event)}\\n\\n`);
+  };
+
+  try {
+    const response = await ai.models.generateContentStream({
+      model: 'gemini-3.8-flash',
+      contents: `You are a senior ${language} engineer. Generate complete, maintainable code for this request. Project: ${projectName}. Code type: ${codeType}. Specification: ${prompt}. Validate inputs, handle errors, avoid hardcoded secrets, preserve stated interfaces, and explain assumptions. Return JSON with keys code, explanation, filename.`,
+      config: { responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 4096 },
+    });
+    for await (const chunk of response) {
+      const text = chunk.text || '';
+      if (text) send({ type: 'delta', text });
+      if (res.destroyed) break;
+    }
+    send({ type: 'done' });
+    res.end();
+  } catch (error) {
+    console.error('Streaming code generation failed:', error);
+    send({ type: 'error', error: 'Streaming generation failed. Please retry using standard generation.' });
+    res.end();
+  }
+});
+
+// 5. README STUDIO GENERATOR ENDPOINT
 app.post('/api/generate-readme', async (req: Request, res: Response) => {
   try {
     if (!isPlainObject(req.body) || !isPlainObject(req.body.project)) return res.status(400).json({ error: 'Valid project data is required.' });
