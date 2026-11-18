@@ -305,3 +305,40 @@ body {
     transition: none;
   }
 }
+
+
+/* Contrast fix: the command-centre hero stays dark in both app themes */
+.nexora-dashboard .nexora-hero {
+  color: #f8fafc;
+}
+.nexora-dashboard .nexora-hero h1 {
+  color: #f8fafc !important;
+}
+.nexora-dashboard .nexora-hero p {
+  color: #cbd5e1 !important;
+}
+.nexora-dashboard .nexora-hero p span {
+  color: #7dd3fc !important;
+}
+.nexora-dashboard .nexora-hero form {
+  border-color: rgba(148, 163, 184, .24) !important;
+}
+.nexora-dashboard .nexora-hero input {
+  color: #f8fafc !important;
+  background: rgba(7, 14, 29, .72) !important;
+  border-color: rgba(148, 163, 184, .28) !important;
+  caret-color: #22d3ee;
+}
+.nexora-dashboard .nexora-hero input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+.nexora-dashboard .nexora-hero .nexora-hero-secondary {
+  color: #e2e8f0 !important;
+  background: rgba(30, 41, 59, .78) !important;
+  border-color: rgba(148, 163, 184, .28) !important;
+}
+.nexora-dashboard .nexora-hero .nexora-hero-secondary:hover {
+  background: rgba(51, 65, 85, .88) !important;
+  border-color: rgba(34, 211, 238, .5) !important;
+}
