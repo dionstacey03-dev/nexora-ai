@@ -17,7 +17,7 @@ React 19, TypeScript, Vite 8, Tailwind CSS 4, Express 4, Clerk, and Google GenAI
 Requires Bun (the repository includes `bun.lock`).
 
 ```bash
-bun install --frozen-lockfile
+bun install
 cp .env.example .env
 # Add GEMINI_API_KEY to .env for live generation
 bun run dev
