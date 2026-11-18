@@ -4,8 +4,10 @@ This branch is an incremental upgrade to the existing application. The original 
 
 ## Phase 1 — Production foundation and identity
 - Vercel serverless adapter, health endpoint, response security headers, request validation, and CI are retained.
-- Added an OIDC/JWKS bearer-token verifier that accepts RS256 tokens only and validates issuer, audience, expiry, subject, and signature.
-- Added `GET /api/auth/me`; it fails closed with `AUTH_NOT_CONFIGURED` until an identity provider is configured.
+- Added Clerk React provider, sign-in/sign-up modal controls, and user profile menu for desktop and mobile navigation.
+- Added Clerk Express middleware to verify session cookies or bearer tokens on the server.
+- All API routes except `/api/health` require a verified Clerk session; missing configuration fails closed with `CLERK_NOT_CONFIGURED`.
+- Added `GET /api/auth/me` to return the verified Clerk user and session identifiers.
 - Added optional shared Upstash Redis rate limiting. When configured, Redis errors fail closed with HTTP 503 rather than silently bypassing the shared limit.
 - The existing local in-memory limiter remains a development fallback when Upstash credentials are absent. Configure Upstash before relying on distributed production limits.
 
@@ -15,7 +17,7 @@ Create or select the NEXORA AI application in the Clerk Dashboard, then configur
 - `CLERK_PUBLISHABLE_KEY` in Vercel Preview and Production (server key).
 - `CLERK_SECRET_KEY` in Vercel Preview and Production (server-only secret).
 
-The application intentionally fails closed until these keys are configured. The API health endpoint remains public; all other API endpoints require a verified Clerk session. Configure allowed origins/redirect URLs for the Vercel preview domain and production domain in Clerk. Production Clerk keys must come from a claimed, production-ready Clerk application.
+The application intentionally fails closed until these keys are configured. The API health endpoint remains public; all other API endpoints require a verified Clerk session. Configure allowed origins/redirect URLs for the Vercel preview domain and production domain in Clerk. Production Clerk keys must come from a claimed, production-ready Clerk application. Do not use development keys in production.
 
 ## Phase 2 — Neon persistence
 - Migration `database/migrations/001_initial_schema.sql` defines users, owner-scoped projects, and preferences.
