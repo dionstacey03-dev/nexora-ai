@@ -1,4 +1,5 @@
 import React from 'react';
+import { UserButton } from '@clerk/react';
 import {
   LayoutDashboard,
   Sparkles,
@@ -137,6 +138,10 @@ export const DesktopTopNav: React.FC<{ onOpenShortcuts?: () => void }> = ({ onOp
             ?
           </kbd>
         </button>
+
+        <div className="flex items-center pl-1">
+          <UserButton afterSignOutUrl="/" />
+        </div>
 
         {/* Sun/Moon Theme Toggle */}
         <div className="flex items-center p-1 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-white/10 shadow-xs">
@@ -284,6 +289,10 @@ export const DesktopSidebar: React.FC<{ onOpenShortcuts?: () => void }> = ({ onO
 
       {/* Bottom Profile / Hotkeys & Theme */}
       <div className="pt-2 border-t border-slate-200/80 dark:border-white/10 space-y-2">
+        <div className="flex items-center justify-center min-w-[38px]">
+          <UserButton afterSignOutUrl="/" />
+        </div>
+
         <button
           onClick={toggleTheme}
           aria-label={`Toggle theme (currently ${resolvedTheme})`}
