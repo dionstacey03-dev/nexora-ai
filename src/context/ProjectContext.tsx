@@ -48,11 +48,11 @@ const DEFAULT_SETTINGS: UserSettings = {
   aiModel: 'gemini-3.8-flash',
   autoSave: true,
   userProfile: {
-    name: 'Alex Rivera',
-    role: 'Principal Software Architect',
-    organization: 'Nexora Systems',
-    bio: 'Building hyper-scalable distributed cloud platforms & intelligent developer tooling.',
-    githubUsername: 'arivera-dev',
+    name: '',
+    role: '',
+    organization: '',
+    bio: '',
+    githubUsername: '',
   },
 };
 
