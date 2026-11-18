@@ -975,7 +975,7 @@ app.post('/api/generate-code/stream', async (req: Request, res: Response) => {
   res.flushHeaders?.();
 
   const send = (event: Record<string, unknown>) => {
-    if (!res.destroyed) res.write(`data: ${JSON.stringify(event)}\\n\\n`);
+    if (!res.destroyed) res.write(`data: ${JSON.stringify(event)}\n\n`);
   };
 
   try {
