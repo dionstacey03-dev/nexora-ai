@@ -230,3 +230,14 @@ No license file is currently included in this repository. Unless a license is ad
 <p align="center">
   Built to help turn software ideas into actionable engineering plans.
 </p>
+
+## Application Preview
+
+### Executive Dashboard
+![NEXORA AI Dashboard](docs/screenshots/nexora-dashboard.png)
+
+### AI Project Generator
+![AI Project Generator](docs/screenshots/nexora-generator.png)
+
+### Development Roadmap
+![Roadmap Builder](docs/screenshots/nexora-roadmap.png)
